@@ -47,7 +47,7 @@ public class CharacterMoveScript : Agent
 
     private bool benchbuilt, campfirebuilt, rocketbuilt, axebuilt, pickaxebuilt, scythebuilt;
     public GameObject bench, fire, rocket, tool;
-    public GameObject benchui, fireui, rocketui, toolui, toolbarui, toollistui, axeui;
+    public GameObject benchui, fireui, rocketui, toolui, toolbarui, toollistui, axeui, scytheui;
     private int[] benchbuildmats = { 3, 1, 1, 1 };
     private int[] firebuildmats = { 2, 1 };
     private int[] cookmats = { 1, 1, 1, 1 };
@@ -360,7 +360,10 @@ public class CharacterMoveScript : Agent
         busy = false;
 
         RectTransform rt = toollistui.GetComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(100, 110);
+        rt.sizeDelta = new Vector2(50, 110);
+
+        axeui.transform.position += new Vector3 (-4, 0, 0);
+        scytheui.transform.position += new Vector3 (-4, 0, 0);
     }
 
     IEnumerator BuildScythe()
@@ -381,7 +384,10 @@ public class CharacterMoveScript : Agent
         busy = false;
 
         RectTransform rt = toollistui.GetComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(75, 110);
+        rt.sizeDelta = new Vector2(40, 110);
+
+        axeui.transform.position += new Vector3 (-4, 0, 0);
+        
     }
 
     IEnumerator Cook()
@@ -779,11 +785,6 @@ public class CharacterMoveScript : Agent
         {
             StartCoroutine(Die());
         }
-
-        // if (axebuilt)
-        // {
-        //     axeui.transform.position = new Vector3(473.5f, transform.position.y, transform.position.z);
-        // }
 
         // if(setrocketfree)
         // {
