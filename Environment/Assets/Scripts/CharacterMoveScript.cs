@@ -47,7 +47,7 @@ public class CharacterMoveScript : Agent
 
     private bool benchbuilt, campfirebuilt, rocketbuilt, axebuilt, pickaxebuilt, scythebuilt;
     public GameObject bench, fire, rocket, tool;
-    public GameObject benchui, fireui, rocketui, toolui;
+    public GameObject benchui, fireui, rocketui, toolui, toolbarui, toollistui, axeui;
     private int[] benchbuildmats = { 3, 1, 1, 1 };
     private int[] firebuildmats = { 2, 1 };
     private int[] cookmats = { 1, 1, 1, 1 };
@@ -118,14 +118,19 @@ public class CharacterMoveScript : Agent
         toolYposition = toolSelector.GetComponent<RectTransform>().anchoredPosition.y;
         flag = -1;
 
-        log = 0;
+        // toolbar initialize (axe -> scythe -> pickaxe)
+        toolbarui.transform.Find("AxeV1").gameObject.SetActive(false);
+        toolbarui.transform.Find("ScytheV1").gameObject.SetActive(false);
+        toolbarui.transform.Find("PickAxeV1").gameObject.SetActive(false);
+
+        log = 10;
         apple = 0;
         meat = 0;
         oil = 0;
         water = 0;
-        copper = 0;
-        gold = 0;
-        iron = 0;
+        copper = 10;
+        gold = 10;
+        iron = 10;
         ManualUpdateAllText();
 
         Health = MaxHealth;
@@ -292,8 +297,8 @@ public class CharacterMoveScript : Agent
         benchui.transform.Find("UIBuilt").gameObject.SetActive(true);
         tool.transform.Find("ToolBlueprint").gameObject.SetActive(true);
         toolui.transform.Find("AxeUI").gameObject.SetActive(true);
-        toolui.transform.Find("PickAxeUI").gameObject.SetActive(true);
-        toolui.transform.Find("ScytheUI").gameObject.SetActive(true);
+        toolui.transform.Find("PickAxeUI").gameObject.SetActive(false);
+        toolui.transform.Find("ScytheUI").gameObject.SetActive(false);
         log -= benchbuildmats[0];
         copper -= benchbuildmats[1];
         gold -= benchbuildmats[2];
@@ -329,6 +334,8 @@ public class CharacterMoveScript : Agent
         tool.transform.Find("ToolBlueprint").gameObject.transform.Find("Axe").gameObject.SetActive(false);
         tool.transform.Find("Tool").gameObject.transform.Find("Axe").gameObject.SetActive(true);
         toolui.transform.Find("AxeUI").gameObject.SetActive(false);
+        toolbarui.transform.Find("AxeV1").gameObject.SetActive(true);
+        toolui.transform.Find("ScytheUI").gameObject.SetActive(true);
         log -= toolbuildmats[0];
         iron -= benchbuildmats[1];
         ManualUpdateAllText();
@@ -345,11 +352,15 @@ public class CharacterMoveScript : Agent
         tool.transform.Find("ToolBlueprint").gameObject.transform.Find("PickAxe").gameObject.SetActive(false);
         tool.transform.Find("Tool").gameObject.transform.Find("PickAxe").gameObject.SetActive(true);
         toolui.transform.Find("PickAxeUI").gameObject.SetActive(false);
+        toolbarui.transform.Find("PickAxeV1").gameObject.SetActive(true);
         log -= toolbuildmats[0];
         copper -= benchbuildmats[1];
         ManualUpdateAllText();
         animator.SetBool("harvesting", false);
         busy = false;
+
+        RectTransform rt = toollistui.GetComponent<RectTransform>();
+        rt.sizeDelta = new Vector2(100, 110);
     }
 
     IEnumerator BuildScythe()
@@ -361,11 +372,16 @@ public class CharacterMoveScript : Agent
         tool.transform.Find("ToolBlueprint").gameObject.transform.Find("Scythe").gameObject.SetActive(false);
         tool.transform.Find("Tool").gameObject.transform.Find("Scythe").gameObject.SetActive(true);
         toolui.transform.Find("ScytheUI").gameObject.SetActive(false);
+        toolbarui.transform.Find("ScytheV1").gameObject.SetActive(true);
+        toolui.transform.Find("PickAxeUI").gameObject.SetActive(true);
         log -= toolbuildmats[0];
         gold -= benchbuildmats[1];
         ManualUpdateAllText();
         animator.SetBool("harvesting", false);
         busy = false;
+
+        RectTransform rt = toollistui.GetComponent<RectTransform>();
+        rt.sizeDelta = new Vector2(75, 110);
     }
 
     IEnumerator Cook()
@@ -584,7 +600,7 @@ public class CharacterMoveScript : Agent
             // PickAxe
             if (vetcaction.DiscreteActions[0] == 8)
             {
-                if (benchbuilt && !pickaxebuilt)
+                if (benchbuilt && !pickaxebuilt && scythebuilt)
                 {
                     if (needtomove(pickaxelocation))
                     {
@@ -608,7 +624,7 @@ public class CharacterMoveScript : Agent
             // Scythe
             if (vetcaction.DiscreteActions[0] == 9)
             {
-                if (benchbuilt && !scythebuilt)
+                if (benchbuilt && !scythebuilt && axebuilt)
                 {
                     if (needtomove(scythelocation))
                     {
@@ -763,6 +779,11 @@ public class CharacterMoveScript : Agent
         {
             StartCoroutine(Die());
         }
+
+        // if (axebuilt)
+        // {
+        //     axeui.transform.position = new Vector3(473.5f, transform.position.y, transform.position.z);
+        // }
 
         // if(setrocketfree)
         // {
